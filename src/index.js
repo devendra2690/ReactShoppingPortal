@@ -3,8 +3,24 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import {Provider} from 'react-redux';
+import { createStore } from 'redux';
+import reducer from './redux/reducer/reducer';
+import axios from 'axios';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+axios.interceptors.request.use(request =>{
+
+    request.headers = {'Access-Control-Allow-Origin':'http://localhost:3000',
+                       'Access-Control-Allow-Headers':'content-type'};
+    return request;
+},error =>{
+     console.log(error);
+     return Promise.reject(error);
+});
+
+const store = createStore(reducer);
+
+ReactDOM.render(<Provider store={store}><App /></Provider>, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
