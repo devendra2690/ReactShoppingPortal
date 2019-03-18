@@ -1,1 +1,3 @@
 export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
+export const UPDATE_PRODUCT = "UPDATE_PRODUCT";
+export const CLEAR_CART = "CLEAR_CART";

@@ -34,7 +34,7 @@ const navBar = (props) =>{
                      </li>
                     </ul>
                     <div className={classes.imagePanel}>
-                      <b> Shopping Cart({props.producObjectSize})</b>
+                     <Link to="/order-summary"><b> Shopping Cart({props.producObjectSize})</b></Link>
                     </div>   
                 </div>
             </nav>

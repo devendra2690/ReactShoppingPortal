@@ -6,14 +6,12 @@ import Input from '../../input/input';
 import Button from '../../button/button';
 
 
-const editProduct = (props) =>{
-   
+const editProduct = (props) =>{   
 
    let message = props.message.map((messageObj, index) =>{
 
         return <li key={index}> {messageObj}</li>;
-   });
-   
+   });   
 
     return(
         <Auxillary>
@@ -38,7 +36,7 @@ const editProduct = (props) =>{
                             value={props.price} label="price" class={classes.inputType}
                             change={props.handleChange} fieldName="Price"/>
 
-                    <Input type="SELECT"  placeholder="Enter Category" list={props.categoryList}
+                    <Input type="SELECT" list={props.categoryList}
                             value={props.category} label="category" class={classes.inputType}
                             change={props.handleChange} fieldName="Product Category"
                             placeholder="Select Category"/>         
@@ -54,11 +52,7 @@ const editProduct = (props) =>{
                 <div className={classes.container}>
                         <Button classes={classes.cancelbtn} eventType='CLICK' change={props.goBack} label='Go Back'/>
                 </div>
-             </form>   
-             {/*<div>
-               <img src={loginImage} alt="Avatar" className={classes.avatar}/>
-             </div>*/
-             }     
+             </form>               
         </Auxillary>
     )    
 } 

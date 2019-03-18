@@ -1,5 +1,4 @@
 import React,{Component} from 'react';
-import axios from 'axios';
 import {connect} from 'react-redux';
 
 import classes from '../login/login.css';
@@ -49,7 +48,8 @@ class LoginForm extends Component {
 
         postService("http://localhost:8080/authentication/validateUser", requestObj, 
                      this.props.dispatchLoginSuccess, this.props);
-        this.props.history.push("/dashboard");       
+                     
+        this.props.history.push("/dashboard/products?product=All");       
     }
 
     validation = (event) => {

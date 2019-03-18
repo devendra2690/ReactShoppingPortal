@@ -1,9 +1,9 @@
 import React,{Component} from 'react';
-import axios from 'axios';
 
 import Auxillary from '../../../hoc/auxillary';
 import EditProduct from './edit-product';
 import AddProduct from './add-product';
+import {putService,postService,getService} from '../../../service/service-operations';
 
 let productOperationType = null;
 let productID = null;
@@ -13,7 +13,6 @@ let componentMessages = [];
 class Product extends Component {
 
     state = {
-
         product : {
 
             id : null,
@@ -26,48 +25,84 @@ class Product extends Component {
     }
 
     handleChange = (event) =>{
-         
+      
+         let fieldName = event.target.name;
+         let fieldValue = event.target.value;
          let updatedProductDetails = {...this.state.product,[event.target.name] : event.target.value,message:[]};
-         this.setState({product:updatedProductDetails})
+         this.setState({product:updatedProductDetails},() => {            
+                    this.checkProductAndCategoryCombination(fieldName,fieldValue);
+          })         
     };
 
     updateProduct = (event) =>{
 
-        event.preventDefault();
-        axios.put("http://localhost:8080/products/updateProductDetails",this.state.product)
-             .then(response => {
-
-                componentMessages.splice(0,componentMessages.length);
-                componentMessages.push("Product Information saved succesfully");
-                this.setState({message:componentMessages});
-             })
-             .catch(error=>{
-                 this.props.history.push("/error");
-             });
+        event.preventDefault();       
+        putService("http://localhost:8080/products/updateProductDetails",this.state.product,
+                   this.handleServiceResponsePostUpdate,this.props);     
     };
+
+
+    handleServiceResponsePostUpdate = () => {
+        componentMessages.splice(0,componentMessages.length);
+        componentMessages.push("Product Information saved succesfully");
+        this.setState({message:componentMessages});
+    }
+
+    setCategoriesTypeFromServerResponse = (response) => {
+        categoryList = response.map( category =>{
+            return {key:category.name,value:category.value};
+         })
+    };
+
     
     saveProduct = (event) =>{
 
-        event.preventDefault();
-        axios.post("http://localhost:8080/products/save",this.state.product)
-             .then(response => {
+        event.preventDefault();          
+        postService("http://localhost:8080/products/save",this.state.product,
+                        this.handleResponsePostSaveProduct,this.props)     
+    }
 
-                componentMessages.splice(0,componentMessages.length);
-                componentMessages.push("Product Information saved succesfully");
-                let productObj = {...this.state.product};
-                productObj.id = response.data.id;
+    handleResponsePostSaveProduct = (response) => {
 
-                this.setState({message:componentMessages,product:productObj});
-             })
-             .catch(error=>{
-                 this.props.history.push("/error");
-             });
+        componentMessages.splice(0,componentMessages.length);
+        componentMessages.push("Product Information saved succesfully");
+        let productObj = {...this.state.product};
+        productObj.id = response.id;
+
+        this.setState({message:componentMessages,product:productObj});
+    }
+
+    checkProductAndCategoryCombination = (fieldName,fieldValue) => {
+
+        if(fieldName === 'title' || fieldName === 'category') {
+            const product = {...this.state.product,[fieldName]:fieldValue}  
+            postService("http://localhost:8080/products/validateProductName",product,
+                        this.handleProductNameServiceValidation,this.props)
+        }       
+    };
+
+    handleProductNameServiceValidation = (response) =>{
+
+         // Here you can fire validation rule to check title and category type.
+         console.log(response);
     }
 
     goBack = () => {
 
         this.props.history.push('/manage-product')
     }; 
+
+    saveProductByIDFromServiceResponse = (response) =>{
+
+        let productDetails = {...this.state.product};
+        productDetails.id = response.id;  
+        productDetails.title = response.title;  
+        productDetails.imageUrl = response.imageUrl;  
+        productDetails.category = response.category;  
+        productDetails.price = response.price;  
+
+        this.setState({product : productDetails});
+    }
 
     render() {
 
@@ -97,7 +132,8 @@ class Product extends Component {
                                     saveProduct = {this.saveProduct}
                                     categoryList = {categoryList}
                                     message = {this.state.message}
-                                    goBack = {this.goBack}/>;
+                                    goBack = {this.goBack}
+                                    checkProductNameValidation = {this.checkProductAndCategoryCombination}/>;
         }else{
 
             this.props.history.push('/manage-product');
@@ -112,35 +148,11 @@ class Product extends Component {
 
     componentDidMount() {
 
+        getService("http://localhost:8080/products/categories",this.setCategoriesTypeFromServerResponse,this.props);    
         if(productID) {
-
-            axios.get("http://localhost:8080/products/getProductByID/"+productID)
-             .then(response =>{
-
-               let productDetails = {...this.state.product};
-               productDetails.id = response.data.id;  
-               productDetails.title = response.data.title;  
-               productDetails.imageUrl = response.data.imageUrl;  
-               productDetails.category = response.data.category;  
-               productDetails.price = response.data.price;  
-
-               this.setState({product : productDetails});
-             })
-             .catch(error =>{
-
-                this.props.history.push("/error");
-             });
-        }
-        
-        axios.get("http://localhost:8080/products/categories")
-             .then(response => {
-                 categoryList = response.data.map( category =>{
-                    return {key:category.name,value:category.value};
-                 })
-             })
-             .catch(error =>{
-                this.props.history.push("/error");
-             })
+            getService("http://localhost:8080/products/getProductByID/"+productID,
+                        this.saveProductByIDFromServiceResponse,this.props); 
+        }     
     }
     
 }

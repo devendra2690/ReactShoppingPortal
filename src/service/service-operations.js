@@ -41,7 +41,7 @@ export function postService(url,object,callBackFunction,config) {
 
 export function putService(url,object,callBackFunction,config) {
 
-    axios.post(url,object)
+    axios.put(url,object)
          .then(response =>{
 
             if(callBackFunction) {
@@ -51,7 +51,6 @@ export function putService(url,object,callBackFunction,config) {
             }
          })
          .catch(error => {
-
             config.history.push("/error");
          });
 };
@@ -59,7 +58,7 @@ export function putService(url,object,callBackFunction,config) {
 
 export function deleteService(url,object,callBackFunction,config) {
 
-    axios.post(url,object)
+    axios.delete(url,object)
          .then(response =>{
 
             if(callBackFunction) {

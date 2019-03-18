@@ -1,9 +1,9 @@
 import React,{Component} from 'react';
-import axios from 'axios';
 
 import Auxillary from '../../hoc/auxillary';
 import SideBar from './sidebar/sidebar';
 import ShoppingDashboard from './shopping-dashboard/shopping-dashboard';
+import {getService} from '../../service/service-operations';
 
 let productType = null;
 let products = [];
@@ -28,19 +28,18 @@ class dashboard extends Component  {
         }         
    }
 
-   callServiceToGetProducts(search) {
+   handleServiceResponse = (response) => {
 
-        axios.get("http://localhost:8080/products/fetchProducts"+search)
-        .then(response =>{
-            products = response.data.map(product =>{
-                return product;
-            });
-            this.setState({productList:products});
-            productType = search;
-        }) 
-        .catch(error =>{                 
-            this.props.history.push("/error");
-        }); 
+        products = response.map(product =>{
+            return product;
+        });
+        this.setState({productList:products});
+        productType = this.props.location.search;
+   }
+
+   callServiceToGetProducts(search) {           
+        getService("http://localhost:8080/products/fetchProducts"+search,
+                     this.handleServiceResponse,this.props);
    }
 
    render() { 

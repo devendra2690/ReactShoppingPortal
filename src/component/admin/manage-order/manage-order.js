@@ -1,6 +1,11 @@
 import React from 'react';
+import {connect} from 'react-redux';
 
 const manageOrder = (props) =>{
+
+    if(props.userRole !== 'ADMIN') {
+        props.history.push("/no-access");
+    }
 
     return(
         <div>
@@ -9,4 +14,11 @@ const manageOrder = (props) =>{
     );
 }
 
-export default manageOrder;
+const mapStateToProperties  = state => {
+
+    return {
+        userRole : state.loginInfo.userRole
+    }
+}
+
+export default connect(mapStateToProperties,null)(manageOrder);

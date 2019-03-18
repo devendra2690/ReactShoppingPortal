@@ -62,7 +62,7 @@ const input = (props) => {
          case "IMAGE":
 
           input = <Auxillary> 
-                     <img src={props.imageUrl} alt="" className={props.class}/>
+                     <img src={props.imageUrl} alt={props.alt || "..."} className={props.class}/>
                   </Auxillary>; 
          break;
 

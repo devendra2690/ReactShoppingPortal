@@ -1,5 +1,6 @@
 import React,{Component} from 'react';
 import {Link} from 'react-router-dom';
+import {connect} from 'react-redux';
 
 import Button from '../../button/button';
 import classes from '../manage-product/manage-product.css';
@@ -19,6 +20,10 @@ class ManageProduct extends Component {
     };
 
     render() {
+
+        if(this.props.userRole !== 'ADMIN') {
+            this.props.history.push("/no-access");
+        }
 
         let productTable = null;
 
@@ -68,19 +73,7 @@ class ManageProduct extends Component {
     
     
     componentDidMount() {
-
-        let allProductList = [];
-
-        getService("http://localhost:8080/products/fetchAllProduct",this.setProductList);
-        {/*axios.get("http://localhost:8080/products/fetchAllProduct")
-        .then(response =>{
-            allProductList = response.data.map(product =>{
-                return product;
-            })
-            this.setState({productList:allProductList});
-        }).catch(error =>{
-             this.props.history.push("/error");
-        });*/}
+        getService("http://localhost:8080/products/fetchAllProduct",this.setProductList);        
     }
 
     setProductList = (response) =>{
@@ -94,4 +87,11 @@ class ManageProduct extends Component {
     };    
 }
 
-export default ManageProduct;
+const mapStateToProperties  = state => {
+
+    return {
+        userRole : state.loginInfo.userRole
+    }
+}
+
+export default connect(mapStateToProperties,null)(ManageProduct);

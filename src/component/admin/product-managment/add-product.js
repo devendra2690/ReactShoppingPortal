@@ -38,7 +38,7 @@ const addProduct = (props) =>{
 
                <Input type="SELECT" list={props.categoryList}
                        value={props.category} label="category" class={classes.inputType}
-                       change={props.handleChange} fieldName="Product Category"
+                       change={(event) => {props.handleChange(event);}} fieldName="Product Category"
                        placeholder="Select Category"/>         
 
                <Input type="INPUT" innerType="input" placeholder="Enter Product URL" 
