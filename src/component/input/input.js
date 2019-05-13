@@ -36,7 +36,7 @@ const input = (props) => {
          case "CHECKBOX" :
           input =  <Auxillary>
                      <label>
-                        <input type="checkbox" checked={props.checked} onChange={props.change || (() =>{})} 
+                        <input type="checkbox" checked={props.checked} className = {props.class || ''} onChange={props.change || (() =>{})} 
                                name={props.name}/>
                         {props.label}
                       </label>
